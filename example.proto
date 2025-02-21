@@ -1,0 +1,29 @@
+syntax = "proto3";
+package example;
+
+option go_package = "./grpcgen";
+
+message CalculateRequest {
+  int64 value = 1;
+}
+
+message CalculatedResult {
+  int64 value = 1;
+}
+
+message Int64Pair {
+  int64 a = 1;
+  int64 b = 2;
+}
+
+service GatewayAPI {
+  rpc Calculate(CalculateRequest) returns (CalculatedResult) {}
+}
+
+service MicroService1 {
+  rpc Add(Int64Pair) returns (CalculatedResult) {}
+}
+
+service MicroService2 {
+  rpc Times(Int64Pair) returns (CalculatedResult) {}
+}

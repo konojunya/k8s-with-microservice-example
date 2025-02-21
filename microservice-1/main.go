@@ -1,21 +1,30 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"context"
+	"log"
+	"net"
+
+	"github.com/konojunya/k8s-with-microservice-example/microservice-1/grpcgen"
+	"google.golang.org/grpc"
 )
 
-func main() {
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		_, err := fmt.Fprintln(w, "hello from microservice 1")
-		if err != nil {
-			fmt.Println("Error writing response:", err)
-		}
-	})
+type Service struct{}
 
-	port := ":8081"
-	fmt.Println("Server is running on http://localhost" + port)
-	if err := http.ListenAndServe(port, nil); err != nil {
-		fmt.Println("Error starting server:", err)
+func main() {
+	listen, err := net.Listen("tcp", ":9001")
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	grpcServer := grpc.NewServer()
+	grpcgen.RegisterMicroService1Server(grpcServer, &Service{})
+
+	if err := grpcServer.Serve(listen); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func (s *Service) Add(ctx context.Context, pair *grpcgen.Int64Pair) (*grpcgen.CalculatedResult, error) {
+	return &grpcgen.CalculatedResult{Value: pair.A + pair.B}, nil
 }

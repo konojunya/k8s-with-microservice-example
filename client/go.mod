@@ -1,4 +1,4 @@
-module github.com/konojunya/k8s-with-microservice-example/gateway-api
+module github.com/konojunya/k8s-with-microservice-example/client
 
 go 1.24.0
 
